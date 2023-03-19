@@ -1,0 +1,134 @@
+interface Common_Book
+{
+    public fun getAuthor():String;
+    public fun getName():String;
+    public fun getPublisher():String;
+}
+class Content(private var author:String, private var text:String,private var name:String,private var publisher:String):Common_Book{
+    override public fun getAuthor():String{
+        return author
+    }
+    public fun setAuthor(nume:String){
+        author=nume
+    }
+    public fun getText():String{
+        return text
+    }
+    public fun setText(text:String){
+        this.text=text
+    }
+    override public fun getName():String{
+        return name
+    }
+    public fun setName(name:String){
+        this.name=name
+    }
+    override public fun getPublisher():String{
+        return publisher
+    }
+    public fun setPublisher(publisher:String){
+        this.publisher=publisher
+    }
+}
+interface Carte{
+    public fun getContent():String;
+    public fun hasAuthor(author: String):Boolean;
+
+
+}
+class Book(private var data:Content):Carte{
+    override fun toString(): String {
+        val print:String=data.getAuthor()+" "+data.getName()+" "+data.getPublisher()+" "+data.getText()
+        return print
+    }
+    public fun getName():String{
+        return data.getName()
+    }
+    public fun getAuthor():String{
+        return data.getAuthor()
+    }
+    public fun getPublisher():String{
+        return data.getPublisher()
+    }
+    override public fun getContent():String{
+        return data.getText()
+    }
+    override public fun hasAuthor(author:String):Boolean{
+        if(data.getAuthor()==author){
+            return true
+        }
+        return false
+    }
+    public fun hasTitle(title:String):Boolean{
+        if(data.getName()==title){
+            return true
+        }
+        return false
+    }
+    public fun isPublishedBy(publisher: String):Boolean{
+        if(data.getPublisher()==publisher){
+            return true
+        }
+        return false
+    }
+}
+class Library(private var books:MutableSet<Book>){
+    public fun getBooks():Set<Book>{
+        return books
+    }
+    public fun addBook(book:Book){
+        books.add(book)
+    }
+    public fun findAllByAuthor(author:String):MutableSet<Book>{
+        val temp= mutableSetOf<Book>();
+        for(i in books){
+            if(i.getAuthor()==author){
+                temp.add(i)
+            }
+        }
+        return temp
+    }
+    public fun findAllByName(name:String):MutableSet<Book>{
+        var temp= mutableSetOf<Book>()
+        for(i in books){
+            if(i.getName()==name){
+                temp.add(i)
+            }
+        }
+        return temp
+    }
+    public fun findAllByPublisher(publisher: String):MutableSet<Book>{
+        var temp= mutableSetOf<Book>()
+        for(i in books){
+            if(i.getPublisher()==publisher){
+                temp.add(i)
+            }
+        }
+        return temp
+    }
+}
+interface IHTMLPrinter{
+    public fun printHTML();
+}
+class LibraryPrinter():IHTMLPrinter{
+    public fun printBooksRaw(books:MutableSet<Book>){
+        for(i in books){
+            println(i.toString())  //printeaza continutul cartilor
+        }
+    }
+
+    override fun printHTML() {
+        TODO("Not yet implemented")
+    }
+}
+fun main(args : Array<String>){
+    var d:Content=Content("Mihai","Text","Nume","Publisher")
+    var x:Content=Content("Chiriac","Text","Nume","Publisher")
+    var b:Book=Book(d)
+    var y:Book=Book(x)
+    var carti=mutableSetOf<Book>(); //colectie de elemente in care poti doar sa adaugi sau sa scoti
+    carti.add(b)
+    var c:Library=Library(carti)
+    c.addBook(y)
+    println(b.toString())
+}
