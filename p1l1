@@ -4,7 +4,7 @@ interface Common_Book
     public fun getName():String;
     public fun getPublisher():String;
 }
-class Content(private var author:String, private var text:String,private var name:String,private var publisher:String):Common_Book{
+class Content(private var author:String, private var text:String,private var name:String,private var publisher:String,private var price:Double):Common_Book{
     override public fun getAuthor():String{
         return author
     }
@@ -28,6 +28,10 @@ class Content(private var author:String, private var text:String,private var nam
     }
     public fun setPublisher(publisher:String){
         this.publisher=publisher
+    }
+    public fun getprice():Double
+    {
+        return price
     }
 }
 interface Carte{
@@ -122,8 +126,8 @@ class LibraryPrinter():IHTMLPrinter{
     }
 }
 fun main(args : Array<String>){
-    var d:Content=Content("Mihai","Text","Nume","Publisher")
-    var x:Content=Content("Chiriac","Text","Nume","Publisher")
+    var d:Content=Content("Mihai","Text","Nume","Publisher",10.5)
+    var x:Content=Content("Chiriac","Text","Nume","Publisher",10.2)
     var b:Book=Book(d)
     var y:Book=Book(x)
     var carti=mutableSetOf<Book>(); //colectie de elemente in care poti doar sa adaugi sau sa scoti
