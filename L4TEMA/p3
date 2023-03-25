@@ -1,0 +1,122 @@
+import java.util.Date
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.Scanner
+import java.io.File
+
+class Notita(private var autor:String, private var data:LocalDate, private var ora:LocalTime, private var content:String) {
+    public fun getAutor():String{
+        return autor
+    }
+    public fun setAutor(autor: String){
+        this.autor=autor
+    }
+    public fun getData():LocalDate{
+        return data
+    }
+    public fun setData(data:LocalDate){
+        this.data=data
+    }
+    public fun getOra():LocalTime{
+        return ora
+    }
+    public fun setOra(ora:LocalTime){
+        this.ora=ora
+    }
+    public fun getContent():String{
+        return content
+    }
+    public fun setContent(content: String){
+        this.content=content
+    }
+    override fun toString(): String {
+        return "Notita(autor='$autor', data=$data, ora='$ora', content='$content')"
+    }
+
+}
+class Manager(private var Lista:MutableList<Notita>,private var nrnotite:Int){
+    public fun getnrnotite():Int{
+        return nrnotite
+    }
+    public fun Print(index:Int){
+        val author=Lista[index].getAutor() //creez fisier cu numele autorului
+        val fileName = author 
+        val file=File(fileName)
+        file.writeText(Lista[index].toString())
+    }
+    public fun Load(index: Int){
+        Print(index)
+        println("New Content: ")
+        val reader=Scanner(System.`in`)
+        Lista[index].setContent(reader.nextLine())
+    }
+    public fun Create(){
+        val reader=Scanner(System.`in`)
+        println("Autor:")
+        val autor=reader.nextLine()
+        val data=LocalDate.now()
+        val ora=LocalTime.now()
+        println("Content:")
+        val content=reader.nextLine()
+        val note=Notita(autor,data,ora,content)
+        Lista.add(note)
+        nrnotite++
+    }
+    public fun Delete(index: Int){
+        Lista.removeAt(index)
+        nrnotite--
+    }
+}
+class User(){
+    private var manager: Manager = Manager(mutableListOf<Notita>(),0)
+    public fun Menu(){
+        println("1.Print()")
+        println("2.Load()")
+        println("3.Create()")
+        println("4.Delete()")
+        val reader=Scanner(System.`in`)
+        println("Introduceti optiunea: ")
+        val opt=reader.nextInt()
+
+        when(opt){
+            1-> {
+                //println("Introduceti indexul notitei: ")
+                //val index=reader.nextInt
+                val nrnotite=manager.getnrnotite()
+                for(i in 0..(nrnotite-1))
+                {
+                    manager.Print(i)
+                }
+
+
+            }
+            2-> {
+                println("Introduceti indexul notitei: ")
+                val index=reader.nextInt()
+                manager.Load(index)
+            }
+
+            3-> {
+                manager.Create()
+            }
+            4-> {
+                println("Introduceti indexul notitei: ")
+                val index=reader.nextInt()
+                manager.Delete(index)
+            }
+        }
+    }
+}
+fun main(args : Array<String>){
+    var ok=true
+    val Chiriac=User()
+    while(ok){
+        Chiriac.Menu()
+        println("Press 0 to exit menu\nPress 1 to continue")
+        val reader=Scanner(System.`in`)
+        val opt=reader.nextInt()
+        if(opt==0){
+            ok=false
+        }
+    }
+}
