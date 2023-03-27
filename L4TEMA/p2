@@ -1,4 +1,3 @@
-import com.sun.org.apache.xpath.internal.operations.Bool
 import java.util.*
 
 interface PaymentMethod
@@ -74,13 +73,16 @@ class Client(private var  ID: Int, private var metodaPlata : String, private var
     {
         if (this.pot_cumpara(bilet)) {
             if(metodaPlata == "cash")
-                {
-                    cash.pay(bilet.getPret())
-                }
-                else if(metodaPlata == "card")
-                {
-                    card.pay(bilet.getPret())
-                }
+            {
+                cash.pay(bilet.getPret())
+            }
+            else if(metodaPlata == "card")
+            {
+                card.pay(bilet.getPret())
+            }
+        }
+        else{
+            System.out.println("nu ai biletu")
         }
     }
 
@@ -94,6 +96,10 @@ fun main()
     val cash=CashPayment(400.5)
     val bilet=Bilet("avatar",biletdate,14.2,22,2,3)
     val client=Client(104,"CardPayment",cash,card,bilet)
-    client.cumparaBilet(bilet)
 
+    val bilete= mutableSetOf<Bilet>()
+    bilete.add(Bilet("avatar",biletdate,14.2,22,2,3))
+    bilete.add(Bilet("star wars",biletdate,17.2,20,3,1))
+    bilete.add(Bilet("Venezuela",biletdate,14.2,10,6,2))
+    client.cumparaBilet(bilet)
 }
