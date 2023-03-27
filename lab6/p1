@@ -38,8 +38,23 @@ class Friend(Contact):
 
 
 if __name__ == '__main__':
+
+    print("1.Pnetru adaugare in agenda introduceti:1 \n"
+          "2.Pentru afisarea contactelor :2 "
+          "3.Iesire din program:3")
     agenda = Agenda()
-    agenda.add_contact(Contact('Chiriac Mihai','ChiriacMihai@gmail.com'))
-    agenda.print_agenda()
+    i=int(input(" da valoare bai"))
 
-
+    while(True):
+        if i==1:
+            String=input()
+            string2=input()
+            agenda.add_contact(Contact(String,string2))
+        if i==2:
+            agenda.print_agenda()
+        if i==3:
+            break
+        print("1.Pnetru adaugare in agenda introduceti:1 \n"
+              "2.Pentru afisarea contactelor :2 \n"
+              "3.Iesire din program:3")
+        i=int(input(" da valoare bai"))
