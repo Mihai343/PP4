@@ -1,138 +1,105 @@
-interface Common_Book
+import java.util.*
+
+interface PaymentMethod
 {
-    public fun getAuthor():String;
-    public fun getName():String;
-    public fun getPublisher():String;
+    fun pay(fee: Double): Boolean
 }
-class Content(private var author:String, private var text:String,private var name:String,private var publisher:String,private var price:Double):Common_Book{
-    override public fun getAuthor():String{
-        return author
+
+class CashPayment(private var availableAmount: Double):PaymentMethod
+{
+    override fun pay(fee: Double): Boolean {
+        return if(availableAmount >= fee) {
+            availableAmount -= fee
+            true
+        } else
+            false
     }
-    public fun setAuthor(nume:String){
-        author=nume
+}
+class CardPayment(private var bankAccount: BankAccount):PaymentMethod
+{
+    override fun pay(fee: Double): Boolean {
+        return bankAccount.updateAmount(fee)
     }
-    public fun getText():String{
-        return text
-    }
-    public fun setText(text:String){
-        this.text=text
-    }
-    override public fun getName():String{
-        return name
-    }
-    public fun setName(name:String){
-        this.name=name
-    }
-    override public fun getPublisher():String{
-        return publisher
-    }
-    public fun setPublisher(publisher:String){
-        this.publisher=publisher
-    }
-    public fun getprice():Double
+
+}
+
+class BankAccount(private var availableAmount: Double, private var cardNumber: String, private var expirationDate: Date, private var cvvCode: Int, private var userName:String)
+{
+    fun updateAmount(value: Double): Boolean
     {
-        return price
+        return if(availableAmount >= value) {
+            availableAmount -= value
+            true
+        } else
+            false
     }
-}
-interface Carte{
-    public fun getContent():String;
-    public fun hasAuthor(author: String):Boolean;
 
+}
+
+class Bilet(private var numeFilm: String, private var data: Date, private var pret: Double, private var rand: Int, private var loc: Int, private var sala: Int)
+{
+    fun getPret(): Double
+    {
+        return pret
+    }
+    fun comparaBilet(bilet: Bilet):Boolean
+    {
+        var ok=true;
+        if(bilet.numeFilm!=this.numeFilm)
+            ok=false;
+        if(bilet.data!=this.data)
+            ok=false
+        if(bilet.pret!=this.pret)
+            ok=false
+        if(bilet.rand!=this.loc)
+            ok=false
+        if(bilet.sala!=this.sala)
+            ok=false
+        return ok
+    }
 
 }
-class Book(private var data:Content):Carte{
-    override fun toString(): String {
-        val print:String=data.getAuthor()+" "+data.getName()+" "+data.getPublisher()+" "+data.getText()
-        return print
+
+class Client(private var  ID: Int, private var metodaPlata : String, private var cash: CashPayment, private var card: CardPayment, private var bilet: Bilet)
+{
+
+    fun  pot_cumpara(bilet:Bilet):Boolean
+    {
+        var b:Boolean
+        b=bilet.comparaBilet(this.bilet)
+        return b
     }
-    public fun getName():String{
-        return data.getName()
-    }
-    public fun getAuthor():String{
-        return data.getAuthor()
-    }
-    public fun getPublisher():String{
-        return data.getPublisher()
-    }
-    override public fun getContent():String{
-        return data.getText()
-    }
-    override public fun hasAuthor(author:String):Boolean{
-        if(data.getAuthor()==author){
-            return true
-        }
-        return false
-    }
-    public fun hasTitle(title:String):Boolean{
-        if(data.getName()==title){
-            return true
-        }
-        return false
-    }
-    public fun isPublishedBy(publisher: String):Boolean{
-        if(data.getPublisher()==publisher){
-            return true
-        }
-        return false
-    }
-}
-class Library(private var books:MutableSet<Book>){
-    public fun getBooks():Set<Book>{
-        return books
-    }
-    public fun addBook(book:Book){
-        books.add(book)
-    }
-    public fun findAllByAuthor(author:String):MutableSet<Book>{
-        val temp= mutableSetOf<Book>();
-        for(i in books){
-            if(i.getAuthor()==author){
-                temp.add(i)
+    fun cumparaBilet(bilet: Bilet)
+    {
+        if (this.pot_cumpara(bilet)) {
+            if(metodaPlata == "cash")
+            {
+                cash.pay(bilet.getPret())
+            }
+            else if(metodaPlata == "card")
+            {
+                card.pay(bilet.getPret())
             }
         }
-        return temp
-    }
-    public fun findAllByName(name:String):MutableSet<Book>{
-        var temp= mutableSetOf<Book>()
-        for(i in books){
-            if(i.getName()==name){
-                temp.add(i)
-            }
-        }
-        return temp
-    }
-    public fun findAllByPublisher(publisher: String):MutableSet<Book>{
-        var temp= mutableSetOf<Book>()
-        for(i in books){
-            if(i.getPublisher()==publisher){
-                temp.add(i)
-            }
-        }
-        return temp
-    }
-}
-interface IHTMLPrinter{
-    public fun printHTML();
-}
-class LibraryPrinter():IHTMLPrinter{
-    public fun printBooksRaw(books:MutableSet<Book>){
-        for(i in books){
-            println(i.toString())  //printeaza continutul cartilor
+        else{
+            System.out.println("nu ai biletu")
         }
     }
 
-    override fun printHTML() {
-        TODO("Not yet implemented")
-    }
 }
-fun main(args : Array<String>){
-    var d:Content=Content("Mihai","Text","Nume","Publisher",10.5)
-    var x:Content=Content("Chiriac","Text","Nume","Publisher",10.2)
-    var b:Book=Book(d)
-    var y:Book=Book(x)
-    var carti=mutableSetOf<Book>(); //colectie de elemente in care poti doar sa adaugi sau sa scoti
-    carti.add(b)
-    var c:Library=Library(carti)
-    c.addBook(y)
-    println(b.toString())
+fun main()
+{
+    val currentdate = Date(22, Calendar.FEBRUARY, 3)
+    val biletdate=Date(30,Calendar.MAY,4)
+    val bank=BankAccount(255.4,"25552223311230",currentdate,150,"mikeal")
+    val card=CardPayment(bank)
+    val cash=CashPayment(400.5)
+    val bilet=Bilet("avatar",biletdate,14.2,22,2,3)
+    val client=Client(104,"CardPayment",cash,card,bilet)
+
+    val bilete= mutableSetOf<Bilet>()
+    bilete.add(Bilet("avatar",biletdate,14.2,22,2,3))
+    bilete.add(Bilet("star wars",biletdate,17.2,20,3,1))
+    bilete.add(Bilet("Venezuela",biletdate,14.2,10,6,2))
+    client.cumparaBilet(bilet)
 }
