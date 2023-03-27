@@ -1,0 +1,99 @@
+import com.sun.org.apache.xpath.internal.operations.Bool
+import java.util.*
+
+interface PaymentMethod
+{
+    fun pay(fee: Double): Boolean
+}
+
+class CashPayment(private var availableAmount: Double):PaymentMethod
+{
+    override fun pay(fee: Double): Boolean {
+        return if(availableAmount >= fee) {
+            availableAmount -= fee
+            true
+        } else
+            false
+    }
+}
+class CardPayment(private var bankAccount: BankAccount):PaymentMethod
+{
+    override fun pay(fee: Double): Boolean {
+        return bankAccount.updateAmount(fee)
+    }
+
+}
+
+class BankAccount(private var availableAmount: Double, private var cardNumber: String, private var expirationDate: Date, private var cvvCode: Int, private var userName:String)
+{
+    fun updateAmount(value: Double): Boolean
+    {
+        return if(availableAmount >= value) {
+            availableAmount -= value
+            true
+        } else
+            false
+    }
+
+}
+
+class Bilet(private var numeFilm: String, private var data: Date, private var pret: Double, private var rand: Int, private var loc: Int, private var sala: Int)
+{
+    fun getPret(): Double
+    {
+        return pret
+    }
+    fun comparaBilet(bilet: Bilet):Boolean
+    {
+        var ok=true;
+        if(bilet.numeFilm!=this.numeFilm)
+            ok=false;
+        if(bilet.data!=this.data)
+            ok=false
+        if(bilet.pret!=this.pret)
+            ok=false
+        if(bilet.rand!=this.loc)
+            ok=false
+        if(bilet.sala!=this.sala)
+            ok=false
+        return ok
+    }
+
+}
+
+class Client(private var  ID: Int, private var metodaPlata : String, private var cash: CashPayment, private var card: CardPayment, private var bilet: Bilet)
+{
+
+    fun  pot_cumpara(bilet:Bilet):Boolean
+    {
+        var b:Boolean
+        b=bilet.comparaBilet(this.bilet)
+        return b
+    }
+    fun cumparaBilet(bilet: Bilet)
+    {
+        if (this.pot_cumpara(bilet)) {
+            if(metodaPlata == "cash")
+                {
+                    cash.pay(bilet.getPret())
+                }
+                else if(metodaPlata == "card")
+                {
+                    card.pay(bilet.getPret())
+                }
+        }
+    }
+
+}
+fun main()
+{
+    val currentdate = Date(22, Calendar.FEBRUARY, 3)
+    val biletdate=Date(30,Calendar.MAY,4)
+    val bank=BankAccount(255.4,"25552223311230",currentdate,150,"mikeal")
+    val card=CardPayment(bank)
+    val cash=CashPayment(400.5)
+    val bilet=Bilet("avatar",biletdate,14.2,22,2,3)
+    val client=Client(104,"CardPayment",cash,card,bilet)
+    client.cumparaBilet(bilet)
+
+}
