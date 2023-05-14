@@ -1,0 +1,36 @@
+import requests
+import time
+
+
+class Proxy:
+    def __init__(self):
+        self.cache_file = 'C:\\Users\\mihai\\PycharmProjects\pythonProject\\venv\\cache.txt'
+
+    def get_response(self, url):
+        timestamp = time.time()
+        cached_response = self.get_cached_response(url)
+        if cached_response and timestamp - cached_response['timestamp'] < 3600:
+            return cached_response['response']
+        response = requests.get(url)
+        self.update_cache(url, response, timestamp)
+        return response
+
+    def get_cached_response(self, url):
+        with open(self.cache_file, 'r') as f:
+            for line in f:
+                cache_entry = line.strip().split(',')
+                if cache_entry[0] == url:
+                    return {'timestamp': float(cache_entry[1]), 'response': cache_entry[2]}
+        return None
+
+    def update_cache(self, url, response, timestamp):
+        with open(self.cache_file, 'a') as f:
+            f.write(f'{url},{timestamp},{response.text}\n')
+
+
+def main():
+    proxy = Proxy()
+    response = proxy.get_response('https://www.example.com')
+    print(response)
+
+main()
