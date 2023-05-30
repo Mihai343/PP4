@@ -1,0 +1,30 @@
+import asyncio
+
+async def calculate_sum(queue):
+    while True:
+        n = await queue.get()
+        if n is None:
+            break
+        result = sum(range(n+1))
+        print(f"Suma pentru n={n}: {result}")
+        queue.task_done()
+
+async def main():
+    queue = asyncio.Queue()
+
+    coroutines = [calculate_sum(queue) for _ in range(4)]
+    await asyncio.gather(*coroutines)
+
+    # Adăugăm valorile n în coadă
+    values = [10, 20, 30, 40]  # Exemplu de valori
+    for value in values:
+        await queue.put(value)
+
+    # Așteptăm până când toate valorile din coadă sunt procesate
+    await queue.join()
+
+    # Oprim corutinele
+    for _ in range(4):
+        await queue.put(None)
+
+asyncio.run(main())
